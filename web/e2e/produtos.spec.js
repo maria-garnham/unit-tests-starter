@@ -11,3 +11,27 @@ test("lista os produtos iniciais", async({ page }) => {
     await expect(page.getByRole("row")).toHaveCount(4);
     await expect(page.getByRole("cell", {name: "Coxinha"})).toBeVisible
 })
+
+
+test("cadastra um produto novo", async({page}) => {
+    await page.getByLabel("Nome").fill("Kibe")
+    await page.getByLabel("Preco").fill("7");
+    await page.getByRole("button", {name: "Cadastrar"}).click();
+
+    const linha = page.getByRole("row", {name: /Kibe/});
+    await expect(linha).toBeVisible();
+    await expect(linha).toContainText("R$ 7,00");
+});
+
+
+test("mostra erro ao cadastrar sem preenchimento", async({ page }) => {
+    await page.getByRole("button", {name: "Cadastrar"}).click();
+    await expect(page.getByText("Nome e Preco sao obrigatorios")).toBeVisible
+})
+
+
+test("remove um produto", async ({page}) => {
+    const linha = page.getByRole("row",{name: /Pastel/})
+    await linha.getByRole("button", { name: "Remover"}).click()
+    await expect(linha).toHaveCount(0)
+})
